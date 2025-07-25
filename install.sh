@@ -193,4 +193,13 @@ ExecStart=-/usr/bin/agetty --noclear --autologin ${USERNAME} %I \$TERM
 EOF
 fi
 
+read -p "Add zlogin to autologin niri? [y/N] " zlogin_choice
+if [[ "$zlogin_choice" =~ ^[Yy]$ ]]; then
+  tee "$HOME/.zlogin" >/dev/null <<EOF
+if [ -z "\$WAYLAND_DISPLAY" ] && [ "\$XDG_VTNR" -eq 1 ] && [ \$(tty) = "/dev/tty1" ]; then
+  dbus-run-session niri --session
+fi
+EOF
+fi
+
 echo "Installation finished!"
