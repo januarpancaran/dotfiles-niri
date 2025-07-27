@@ -6,6 +6,7 @@ APPS=(
     discord
     dracula-gtk-theme
     dracula-icons-theme
+    eog
     ghostty
     gnome-control-center
     google-chrome
@@ -15,7 +16,6 @@ APPS=(
     networkmanager
     niri
     obs-studio
-    papirus-icon-theme
     spotify-launcher
     telegram-desktop
     visual-studio-code-bin
@@ -45,12 +45,18 @@ UTILS=(
     polkit-gnome
     xorg-xhost
 
+    # Notifications
+    inotify-tools
+    libnotify
+    mako
+
     # Timeshift
     timeshift-autosnap
 
     # Others
     bat
     curl
+    ethtool
     fastfetch
     fuzzel
     fzf
@@ -58,6 +64,8 @@ UTILS=(
     htop
     hypridle
     hyprlock
+    less
+    man-db
     nodejs
     npm
     ntfs-3g
@@ -66,6 +74,7 @@ UTILS=(
     playerctl
     pyenv
     ripgrep
+    smartmontools
     starship
     swaybg
     tk
@@ -84,6 +93,7 @@ UTILS=(
     zip
     zoxide
     zsh
+    gnome-keyring
 )
 
 FONTS=(
