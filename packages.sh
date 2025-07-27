@@ -7,6 +7,7 @@ APPS=(
     dracula-gtk-theme
     dracula-icons-theme
     eog
+    gdm
     ghostty
     gnome-control-center
     google-chrome
@@ -110,6 +111,7 @@ SERVICES=(
     # System
     NetworkManager
     bluetooth
+    gdm
     tlp
 
     # User

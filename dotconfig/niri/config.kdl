@@ -108,7 +108,6 @@ screenshot-path "~/Pictures/Screenshots/Screenshot_%Y%m%d_%H%M%S.png"
 animations { }
 
 window-rule {
-    open-maximized true
     geometry-corner-radius 12
     clip-to-geometry true
 }

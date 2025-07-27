@@ -115,9 +115,9 @@ EOF
 echo "Enabling services..."
 for service in "${SERVICES[@]}"; do
 	if [ "$service" = "pipewire" ]; then
-		systemctl enable --user --now "$service"
+		systemctl enable --user "$service"
 	else
-		"${SUDO_CMD}" systemctl enable --now "$service"
+		"${SUDO_CMD}" systemctl enable "$service"
 	fi
 done
 
@@ -144,8 +144,8 @@ for item in "${CONF_SRC}"/*; do
 	cp -r "${item}" "${CONF_DIR}"
 done
 
-# Installing dracula gtk theme and icons
 "${SUDO_CMD}" ln -s /usr/share/themes/Dracula/gtk-4.0 $HOME/.config/gtk-4.0
+"${SUDO_CMD}" ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
 
 read -p "Change shell to zsh? [y/N] " shell_choice
 if [[ "$shell_choice" =~ ^[Yy]$ ]]; then
@@ -189,16 +189,7 @@ if [[ "$autologin_choice" =~ ^[Yy]$ ]]; then
 	"${SUDO_CMD}" tee "${AUTOLOGIN_CONF}" >/dev/null <<EOF
 [Service]
 ExecStart=
-ExecStart=-/usr/bin/agetty --noclear --autologin ${USERNAME} %I \$TERM
-EOF
-fi
-
-read -p "Add zlogin to autologin niri? [y/N] " zlogin_choice
-if [[ "$zlogin_choice" =~ ^[Yy]$ ]]; then
-	tee "$HOME/.zlogin" >/dev/null <<EOF
-if [ -z "\$WAYLAND_DISPLAY" ] && [ "\$XDG_VTNR" -eq 1 ] && [ "\$(tty)" = "/dev/tty1" ]; then
-    exec niri --session
-fi
+ExecStart=-/sbin/agetty -o '-p -f -- \\\u' --noclear --autologin ${USERNAME} %I \$TERM
 EOF
 fi
 
