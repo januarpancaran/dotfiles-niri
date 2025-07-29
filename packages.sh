@@ -21,6 +21,7 @@ APPS=(
     spotify-launcher
     telegram-desktop
     visual-studio-code-bin
+    wlogout
 )
 
 UTILS=(
