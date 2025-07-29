@@ -90,7 +90,7 @@ environment {
     ELECTRON_OZONE_PLATFORM_HINT "wayland"
 }
 
-spawn-at-startup "swaybg" "-i" "your_image_here.png"
+spawn-at-startup "swww-daemon"
 spawn-at-startup "mako"
 spawn-at-startup "eww" "daemon"
 spawn-at-startup "eww" "open" "bar"
