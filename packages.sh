@@ -7,6 +7,7 @@ APPS=(
     dracula-gtk-theme
     dracula-icons-theme
     eog
+    eww-git
     gdm
     ghostty
     gnome-control-center
@@ -62,9 +63,11 @@ UTILS=(
     fuzzel
     fzf
     git
+    gnome-keyring
     htop
     hypridle
     hyprlock
+    jq
     less
     man-db
     nodejs
@@ -82,6 +85,7 @@ UTILS=(
     tlp
     tmux
     trash-cli
+    tree
     unrar
     unzip
     wget
@@ -94,7 +98,6 @@ UTILS=(
     zip
     zoxide
     zsh
-    gnome-keyring
 )
 
 FONTS=(
@@ -102,9 +105,9 @@ FONTS=(
     noto-fonts-emoji
     otf-font-awesome
     ttf-jetbrains-mono-nerd
-    ttf-space-mono-nerd
-    ttf-ms-win11-auto
     ttf-material-symbols-variable-git
+    ttf-ms-win11-auto
+    ttf-space-mono-nerd
 )
 
 SERVICES=(

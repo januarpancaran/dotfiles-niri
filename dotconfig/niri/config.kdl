@@ -91,6 +91,8 @@ environment {
 }
 
 spawn-at-startup "swaybg" "-i" "your_image_here.png"
+spawn-at-startup "eww" "daemon"
+spawn-at-startup "eww" "open" "bar"
 spawn-at-startup "mako"
 spawn-at-startup "hypridle"
 spawn-at-startup "xwayland-satellite"
