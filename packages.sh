@@ -10,6 +10,7 @@ APPS=(
 	gdm
 	ghostty
 	gnome-control-center
+	libreoffice
 	loupe
 	mpv
 	nautilus
@@ -17,6 +18,7 @@ APPS=(
 	networkmanager
 	niri
 	obs-studio
+	papers
 	spotify-launcher
 	telegram-desktop
 	visual-studio-code-bin
