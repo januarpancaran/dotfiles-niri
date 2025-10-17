@@ -11,7 +11,6 @@ APPS=(
 	gdm
 	ghostty
 	gnome-control-center
-	google-chrome
 	mpv
 	nautilus
 	neovim
@@ -22,6 +21,7 @@ APPS=(
 	telegram-desktop
 	visual-studio-code-bin
 	wlogout
+	zen-browser-bin
 )
 
 UTILS=(
