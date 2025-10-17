@@ -6,11 +6,11 @@ APPS=(
 	discord
 	dracula-gtk-theme
 	dracula-icons-theme
-	eog
 	eww-git
 	gdm
 	ghostty
 	gnome-control-center
+	loupe
 	mpv
 	nautilus
 	neovim
