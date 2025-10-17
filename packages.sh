@@ -94,7 +94,6 @@ UTILS=(
 	xdg-desktop-portal-gnome
 	xdg-desktop-portal-gtk
 	xwayland-satellite
-	xwaylandvideobridge
 	yazi
 	zip
 	zoxide
@@ -107,7 +106,6 @@ FONTS=(
 	otf-font-awesome
 	ttf-jetbrains-mono-nerd
 	ttf-material-symbols-variable-git
-	ttf-ms-win11-auto
 	ttf-space-mono-nerd
 )
 
