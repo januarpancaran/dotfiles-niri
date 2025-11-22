@@ -180,38 +180,4 @@ EOF
 "${SUDO_CMD}" udevadm control --reload-rules
 "${SUDO_CMD}" udevadm trigger
 
-install_nvim_config() {
-    NVIM_DIR="$HOME/.config/nvim"
-    TMP_NVIM_DIR=$(mktemp -d -t neovim-config-XXXXXX)
-
-    if [ -d "${NVIM_DIR}" ]; then
-        mv "${NVIM_DIR}" "${NVIM_DIR}".bak
-    fi
-
-    git clone https://github.com/januarpancaran/neovim-config.git "${TMP_NVIM_DIR}"
-    mkdir -p "${NVIM_DIR}"
-    cp -r "${TMP_NVIM_DIR}"/{lua,init.lua} "$NVIM_DIR"
-
-    rm -rf "${TMP_NVIM_DIR}"
-}
-
-read -p "Install my neovim config? [y/N] " nvim_choice
-if [[ "$nvim_choice" =~ ^[Yy]$ ]]; then
-    install_nvim_config
-fi
-
-read -p "Enable autologin? [y/N] " autologin_choice
-if [[ "$autologin_choice" =~ ^[Yy]$ ]]; then
-    USERNAME=$(whoami)
-    AUTOLOGIN_DIR="/etc/systemd/system/getty@tty1.service.d"
-    "${SUDO_CMD}" mkdir -p "${AUTOLOGIN_DIR}"
-
-    AUTOLOGIN_CONF="${AUTOLOGIN_DIR}/autologin.conf"
-    "${SUDO_CMD}" tee "${AUTOLOGIN_CONF}" >/dev/null <<EOF
-[Service]
-ExecStart=
-ExecStart=-/sbin/agetty -o '-p -f -- \\\u' --noclear --autologin ${USERNAME} %I \$TERM
-EOF
-fi
-
 echo "Installation finished!"
