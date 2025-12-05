@@ -19,7 +19,7 @@ APPS=(
     niri
     obs-studio
     papers
-    spotify-launcher
+    spotify
     telegram-desktop
     visual-studio-code-bin
     wlogout
