@@ -124,7 +124,7 @@ binds {
     Mod+R { spawn "fuzzel"; }
     Mod+C { spawn "code"; }
     Mod+Shift+C { spawn "env" "XDG_CURRENT_DESKTOP=gnome" "gnome-control-center";}
-    Mod+SemiColon { spawn "spotify-launcher"; }
+    Mod+SemiColon { spawn "spotify"; }
     Mod+D { spawn "discord"; }
     Mod+M { spawn "wlogout"; }
     Mod+Shift+SemiColon repeat=false { spawn-sh "wl-mirror $(niri msg --json focused-output | jq -r .name)"; }
