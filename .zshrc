@@ -83,3 +83,6 @@ eval "$(starship init zsh)"
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init - zsh)"
+
+export ANTHROPIC_BASE_URL="http://localhost:8080"
+export ANTHROPIC_AUTH_TOKEN="test"
