@@ -76,6 +76,7 @@ UTILS=(
 	nodejs
 	npm
 	ntfs-3g
+	opencode
 	openssh
 	os-prober
 	playerctl
