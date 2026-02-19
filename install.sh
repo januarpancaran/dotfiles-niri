@@ -1,88 +1,84 @@
 #!/bin/bash
 
 command_exists() {
-    command -v "$1" &>/dev/null
+	command -v "$1" &>/dev/null
 }
 
-# Checking sudo command
-SUDO_CMD=""
-
-if command_exists sudo; then
-    SUDO_CMD="sudo"
-elif command_exists doas; then
-    SUDO_CMD="doas"
-else
-    echo "No sudo command detected!"
-    exit 1
-fi
-
-# Checking AUR Helper
-AUR_HELPER=""
+require_sudo_cmd() {
+	if command_exists sudo; then
+		SUDO_CMD="sudo"
+	elif command_exists doas; then
+		SUDO_CMD="doas"
+	else
+		echo "No sudo command detected!"
+		exit 1
+	fi
+}
 
 install_aur_helper() {
-    HELPER="$1"
-    TMP_HELPER_DIR=$(mktemp -d -t aur-helper-XXXXXX)
+	HELPER="$1"
+	TMP_HELPER_DIR=$(mktemp -d -t aur-helper-XXXXXX)
 
-    "${SUDO_CMD}" pacman -Syu --noconfirm git
-    git clone https://aur.archlinux.org/"${HELPER}".git "${TMP_HELPER_DIR}"
-    (cd "${TMP_HELPER_DIR}" && makepkg -si --noconfirm)
-    rm -rf "${TMP_HELPER_DIR}"
+	"${SUDO_CMD}" pacman -Syu --noconfirm git
+	git clone https://aur.archlinux.org/"${HELPER}".git "${TMP_HELPER_DIR}"
+	(cd "${TMP_HELPER_DIR}" && makepkg -si --noconfirm)
+	rm -rf "${TMP_HELPER_DIR}"
 
-    check_aur_helper
+	check_aur_helper
 }
 
 check_aur_helper() {
-    if command_exists yay; then
-        AUR_HELPER="yay"
-    elif command_exists paru; then
-        AUR_HELPER="paru"
-    else
-        echo "No AUR Helper detected!"
-        echo "Choose AUR Helper to install: [1 or 2]: "
-        echo "1) yay"
-        echo "2) paru"
-        read -p "Enter your choice: [1 or 2]: " aur_choice
+	if command_exists yay; then
+		AUR_HELPER="yay"
+	elif command_exists paru; then
+		AUR_HELPER="paru"
+	else
+		echo "No AUR Helper detected!"
+		echo "Choose AUR Helper to install: [1 or 2]: "
+		echo "1) yay"
+		echo "2) paru"
+		read -p "Enter your choice: [1 or 2]: " aur_choice
 
-        case "$aur_choice" in
-        1)
-            echo "Installing yay..."
-            install_aur_helper yay
-            AUR_HELPER="yay"
-            ;;
+		case "$aur_choice" in
+		1)
+			echo "Installing yay..."
+			install_aur_helper yay
+			AUR_HELPER="yay"
+			;;
 
-        2)
-            echo "Installing paru..."
-            install_aur_helper paru
-            AUR_HELPER="paru"
-            ;;
-        *)
-            echo "Invalid choice."
-            exit 1
-            ;;
-        esac
-    fi
+		2)
+			echo "Installing paru..."
+			install_aur_helper paru
+			AUR_HELPER="paru"
+			;;
+		*)
+			echo "Invalid choice."
+			exit 1
+			;;
+		esac
+	fi
 }
-
-check_aur_helper
 
 install_pkg() {
-    "${AUR_HELPER}" -Syu --noconfirm "$@"
+	"${AUR_HELPER}" -Syu --noconfirm "$@"
 }
 
-source packages.sh
+install_packages() {
+	source packages.sh
 
-echo "Installing packages..."
-install_pkg "${APPS[@]}"
+	echo "Installing packages..."
+	install_pkg "${APPS[@]}"
 
-echo "Installing Utils..."
-install_pkg "${UTILS[@]}"
+	echo "Installing Utils..."
+	install_pkg "${UTILS[@]}"
 
-echo "Installing Fonts..."
-install_pkg "${FONTS[@]}"
+	echo "Installing Fonts..."
+	install_pkg "${FONTS[@]}"
+}
 
-# TLP config
-TLP_CONF="/etc/tlp.conf"
-"${SUDO_CMD}" tee "${TLP_CONF}" >/dev/null <<EOF
+configure_tlp() {
+	TLP_CONF="/etc/tlp.conf"
+	"${SUDO_CMD}" tee "${TLP_CONF}" >/dev/null <<EOF
 TLP_ENABLE=1
 TLP_DEFAULT_MODE=BAT
 TLP_PERSISTENT_DEFAULT=0
@@ -111,73 +107,122 @@ CPU_BOOST_ON_BAT=0
 CPU_HWP_DYN_BOOST_ON_AC=1
 CPU_HWP_DYN_BOOST_ON_BAT=0
 EOF
+}
 
-echo "Enabling services..."
-for service in "${SERVICES[@]}"; do
-    if [ "$service" = "pipewire" ]; then
-        systemctl enable --user "$service"
-    else
-        "${SUDO_CMD}" systemctl enable "$service"
-    fi
-done
+enable_services() {
+	source packages.sh
+	echo "Enabling services..."
+	for service in "${SERVICES[@]}"; do
+		if [ "$service" = "pipewire" ]; then
+			systemctl enable --user "$service"
+		else
+			"${SUDO_CMD}" systemctl enable "$service"
+		fi
+	done
+}
 
-echo "Copying config files..."
-CONF_SRC="./dotconfig"
-CONF_DIR=""
+setup_config_dir() {
+	if [ -d "$XDG_CONFIG_HOME" ]; then
+		CONF_DIR="$XDG_CONFIG_HOME"
+	else
+		if [ ! -d "$HOME/.config" ]; then
+			mkdir -p "$HOME/.config"
+		fi
+		CONF_DIR="$HOME/.config"
+	fi
+}
 
-if [ -d "$XDG_CONFIG_HOME" ]; then
-    CONF_DIR="$XDG_CONFIG_HOME"
-else
-    if [ ! -d "$HOME/.config" ]; then
-        mkdir -p "$HOME/.config"
-    fi
+copy_configs() {
+	echo "Copying config files..."
+	CONF_SRC="./dotconfig"
+	setup_config_dir
 
-    CONF_DIR="$HOME/.config"
-fi
+	for item in "${CONF_SRC}"/*; do
+		name=$(basename "$item")
+		if [ -d "${CONF_DIR}/${name}" ]; then
+			mv -v "${CONF_DIR}/${name}" "${CONF_DIR}/${name}.bak"
+		fi
 
-for item in "${CONF_SRC}"/*; do
-    name=$(basename "$item")
-    if [ -d "${CONF_DIR}/${name}" ]; then
-        mv -v "${CONF_DIR}/${name}" "${CONF_DIR}/${name}.bak"
-    fi
+		cp -r "${item}" "${CONF_DIR}"
+	done
+}
 
-    cp -r "${item}" "${CONF_DIR}"
-done
+setup_symlinks() {
+	"${SUDO_CMD}" ln -s /usr/share/themes/Dracula/gtk-4.0 $HOME/.config/gtk-4.0
+	"${SUDO_CMD}" ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
+}
 
-"${SUDO_CMD}" ln -s /usr/share/themes/Dracula/gtk-4.0 $HOME/.config/gtk-4.0
-"${SUDO_CMD}" ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
+maybe_change_shell() {
+	read -p "Change shell to zsh? [y/N] " shell_choice
+	if [[ "$shell_choice" =~ ^[Yy]$ ]]; then
+		cp .zshrc "$HOME"
+		chsh -s "$(which zsh)"
+	fi
+}
 
-read -p "Change shell to zsh? [y/N] " shell_choice
-if [[ "$shell_choice" =~ ^[Yy]$ ]]; then
-    cp .zshrc "$HOME"
-    chsh -s "$(which zsh)"
-fi
+install_tmux_tpm() {
+	TPM_DIR="$HOME/.config/tmux/plugins/tpm"
+	if [ ! -d "$TPM_DIR" ]; then
+		git clone https://github.com/tmux-plugins/tpm $HOME/.config/tmux/plugins/tpm
+	fi
+}
 
-# TPM for tmux
-TPM_DIR="$HOME/.config/tmux/plugins/tpm"
-if [ ! -d "$TPM_DIR" ]; then
-    git clone https://github.com/tmux-plugins/tpm $HOME/.config/tmux/plugins/tpm
-fi
+setup_power_udev_rules() {
+	echo "Creating power udev rules..."
 
-echo "Creating power udev rules..."
+	USERNAME=$(whoami)
+	UDEV_RULES_FILE="/etc/udev/rules.d/99-chargingnotify.rules"
+	CHARGING_NOTIFY_SCRIPT="$HOME/.config/mako/scripts/charging-notifier.sh"
+	WAYLAND_DISPLAY="wayland-0"
+	DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
 
-USERNAME=$(whoami)
-UDEV_RULES_FILE="/etc/udev/rules.d/99-chargingnotify.rules"
-CHARGING_NOTIFY_SCRIPT="$HOME/.config/mako/scripts/charging-notifier.sh"
-WAYLAND_DISPLAY="wayland-0"
-DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
+	if [ ! -x "$CHARGING_NOTIFY_SCRIPT" ]; then
+		echo "Error: $CHARGING_NOTIFY_SCRIPT does not exist or is not executable."
+		exit 1
+	fi
 
-if [ ! -x "$CHARGING_NOTIFY_SCRIPT" ]; then
-    echo "Error: $CHARGING_NOTIFY_SCRIPT does not exist or is not executable."
-    exit 1
-fi
-
-"${SUDO_CMD}" tee "${UDEV_RULES_FILE}" >/dev/null <<EOF
+	"${SUDO_CMD}" tee "${UDEV_RULES_FILE}" >/dev/null <<EOF
 ACTION=="change", SUBSYSTEM=="power_supply", ATTRS{type}=="Mains", ATTRS{online}=="1", ENV{WAYLAND_DISPLAY}="$WAYLAND_DISPLAY", ENV{DBUS_SESSION_BUS_ADDRESS}="$DBUS_SESSION_BUS_ADDRESS" RUN+="/usr/bin/su $USERNAME -c '$CHARGING_NOTIFY_SCRIPT 1'"
 ACTION=="change", SUBSYSTEM=="power_supply", ATTRS{type}=="Mains", ATTRS{online}=="0", ENV{WAYLAND_DISPLAY}="$WAYLAND_DISPLAY", ENV{DBUS_SESSION_BUS_ADDRESS}="$DBUS_SESSION_BUS_ADDRESS" RUN+="/usr/bin/su $USERNAME -c '$CHARGING_NOTIFY_SCRIPT 0'"
 EOF
 
-"${SUDO_CMD}" udevadm control --reload-rules
-"${SUDO_CMD}" udevadm trigger
+	"${SUDO_CMD}" udevadm control --reload-rules
+	"${SUDO_CMD}" udevadm trigger
+}
 
-echo "Installation finished!"
+install_neovim_config() {
+	read -p "Install optional Neovim config? [y/N] " nvim_choice
+	if [[ ! "$nvim_choice" =~ ^[Yy]$ ]]; then
+		return 0
+	fi
+
+	setup_config_dir
+	NVIM_DIR="${CONF_DIR}/nvim"
+
+	if [ -d "$NVIM_DIR" ]; then
+		mv -v "$NVIM_DIR" "${NVIM_DIR}.bak"
+	fi
+
+	git clone https://github.com/januarpancaran/neovim-config.git "$NVIM_DIR"
+}
+
+main() {
+	SUDO_CMD=""
+	AUR_HELPER=""
+
+	require_sudo_cmd
+	check_aur_helper
+	install_packages
+	configure_tlp
+	enable_services
+	copy_configs
+	setup_symlinks
+	maybe_change_shell
+	install_tmux_tpm
+	setup_power_udev_rules
+	install_neovim_config
+
+	echo "Installation finished!"
+}
+
+main
