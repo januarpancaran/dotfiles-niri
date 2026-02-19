@@ -118,8 +118,8 @@ window-rule {
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+T { spawn "ghostty"; }
-    Mod+B { spawn "zen-browser"; }
-    Mod+I { spawn "zen-browser" "--private-window"; }
+    Mod+B { spawn "brave"; }
+    Mod+I { spawn "brave" "--incognito"; }
     Mod+E { spawn "nautilus"; }
     Mod+R { spawn "fuzzel"; }
     Mod+C { spawn "code"; }
