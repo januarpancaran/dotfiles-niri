@@ -127,3 +127,7 @@ HOST_SERVICES=(
 USER_SERVICES=(
 	pipewire
 )
+
+GROUPS=(
+	docker
+)

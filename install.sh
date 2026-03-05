@@ -109,6 +109,15 @@ CPU_HWP_DYN_BOOST_ON_BAT=0
 EOF
 }
 
+add_group() {
+	source packages.sh
+	echo "Adding groups..."
+
+	for group in "${GROUPS[@]}"; do
+		"${SUDO_CMD}" usermod -aG "$group" $(whoami)
+	done
+}
+
 enable_services() {
 	source packages.sh
 	echo "Enabling services..."
@@ -215,6 +224,7 @@ main() {
 	check_aur_helper
 	install_packages
 	configure_tlp
+	add_group
 	enable_services
 	copy_configs
 	setup_symlinks
