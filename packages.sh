@@ -3,6 +3,7 @@
 APPS=(
 	bibata-cursor-theme-bin
 	blueberry
+	cloudflare-warp-bin
 	discord
 	dracula-gtk-theme
 	dracula-icons-theme
@@ -122,6 +123,7 @@ HOST_SERVICES=(
 	docker
 	gdm
 	tlp
+	warp-svc
 )
 
 USER_SERVICES=(
