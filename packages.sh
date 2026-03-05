@@ -6,6 +6,9 @@ APPS=(
 	discord
 	dracula-gtk-theme
 	dracula-icons-theme
+	docker
+	docker-compose
+	docker-buildx
 	eww-git
 	firefox
 	gdm
@@ -113,13 +116,14 @@ FONTS=(
 	ttf-space-mono-nerd
 )
 
-SERVICES=(
-	# System
+HOST_SERVICES=(
 	NetworkManager
 	bluetooth
+	docker
 	gdm
 	tlp
+)
 
-	# User
+USER_SERVICES=(
 	pipewire
 )

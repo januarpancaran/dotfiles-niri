@@ -112,12 +112,13 @@ EOF
 enable_services() {
 	source packages.sh
 	echo "Enabling services..."
-	for service in "${SERVICES[@]}"; do
-		if [ "$service" = "pipewire" ]; then
-			systemctl enable --user "$service"
-		else
-			"${SUDO_CMD}" systemctl enable "$service"
-		fi
+
+	for service in "${HOST_SERVICES[@]}"; do
+		"${SUDO_CMD}" systemctl enable "$service"
+	done
+
+	for service in "${USER_SERVICES[@]}"; do
+		systemctl enable --user "$service"
 	done
 }
 
