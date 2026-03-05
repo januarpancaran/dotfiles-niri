@@ -118,8 +118,8 @@ window-rule {
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+T { spawn "ghostty"; }
-    Mod+B { spawn "brave"; }
-    Mod+I { spawn "brave" "--incognito"; }
+    Mod+B { spawn "firefox"; }
+    Mod+I { spawn "firefox" "--private-window"; }
     Mod+E { spawn "nautilus"; }
     Mod+R { spawn "fuzzel"; }
     Mod+C { spawn "code"; }

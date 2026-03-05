@@ -3,11 +3,11 @@
 APPS=(
 	bibata-cursor-theme-bin
 	blueberry
-	brave-bin
 	discord
 	dracula-gtk-theme
 	dracula-icons-theme
 	eww-git
+	firefox
 	gdm
 	ghostty
 	gnome-control-center
